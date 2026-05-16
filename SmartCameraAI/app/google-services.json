@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "482607133067",
+    "project_id": "smartcameraai-ae196",
+    "storage_bucket": "smartcameraai-ae196.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:482607133067:android:49b8ea49d079246914ff8e",
+        "android_client_info": {
+          "package_name": "van.edu.vn.smartcameraai"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD5-VNssOLL4wutIvbr_Z674dgh8xti6pU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
