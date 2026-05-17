@@ -18,10 +18,11 @@ import com.google.firebase.auth.FirebaseAuth;
 
 public class Login extends AppCompatActivity {
     EditText edtEmail, edtPassword;
-    TextView tvToRegister;
+    TextView tvRegisterLink;
     Button btnLogin;
 
     FirebaseAuth mAuth;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,16 +33,19 @@ public class Login extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
         edtEmail = findViewById(R.id.edtLoginEmail);
         edtPassword = findViewById(R.id.edtLoginPassword);
         btnLogin = findViewById(R.id.btnLogin);
-        tvToRegister= findViewById(R.id.tvToRegister);
+        tvRegisterLink = findViewById(R.id.tvRegisterLink); // Ánh xạ đúng ID "Đăng ký ngay"
         mAuth = FirebaseAuth.getInstance();
 
-        tvToRegister.setOnClickListener(new View.OnClickListener() {
+        // Xử lý sự kiện click vào "Đăng ký ngay" để chuyển sang RegisterActivity
+        tvRegisterLink.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(Login.this, Register.class));
+                Intent intent = new Intent(Login.this, Register.class);
+                startActivity(intent);
             }
         });
 
@@ -51,11 +55,11 @@ public class Login extends AppCompatActivity {
                 String email = edtEmail.getText().toString().trim();
                 String pass = edtPassword.getText().toString().trim();
 
-                if(email.isEmpty() || pass.isEmpty()){
+                if (email.isEmpty() || pass.isEmpty()) {
                     Toast.makeText(v.getContext(), "Vui lòng nhập đầy đủ thông tin", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                mAuth.signInWithEmailAndPassword(email,pass).addOnCompleteListener(Login.this, task -> {
+                mAuth.signInWithEmailAndPassword(email, pass).addOnCompleteListener(Login.this, task -> {
                     if (task.isSuccessful()) {
                         Toast.makeText(Login.this, "Đăng nhập thành công!", Toast.LENGTH_SHORT).show();
                         startActivity(new Intent(Login.this, MainActivity.class));

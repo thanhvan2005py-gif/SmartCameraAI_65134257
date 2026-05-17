@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/nav_home"
+        android:icon="@drawable/home"
+        android:title="Trang chủ" />
+
+    <!-- Để một mục trống ở giữa để nhường chỗ cho nút FAB -->
+    <item
+        android:id="@+id/nav_placeholder"
+        android:title=""
+        android:enabled="false" />
+
+    <item
+        android:id="@+id/nav_profile"
+        android:icon="@drawable/account"
+        android:title="Cá nhân" />
+</menu>

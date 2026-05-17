@@ -1,3 +1,23 @@
 <resources>
     <string name="app_name">SmartCameraAI</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <!-- Register Screen -->
+    <string name="register_title">Đăng ký tài khoản mới</string>
+    <string name="hint_full_name">Họ và tên</string>
+    <string name="hint_email">Email của bạn</string>
+    <string name="hint_password">Mật khẩu</string>
+    <string name="hint_confirm_password">Nhập lại mật khẩu</string>
+    <string name="btn_register">ĐĂNG KÝ</string>
+    <string name="already_have_account">Đã có tài khoản? </string>
+    <string name="login_now">Đăng nhập ngay</string>
+    <string name="error_empty_name">Vui lòng nhập họ tên</string>
+    <string name="error_empty_email">Vui lòng nhập email</string>
+    <string name="error_invalid_email">Email không đúng định dạng</string>
+    <string name="error_empty_password">Vui lòng nhập mật khẩu</string>
+    <string name="error_short_password">Mật khẩu tối thiểu 6 ký tự</string>
+    <string name="error_mismatch_password">Mật khẩu xác nhận không khớp</string>
+    <string name="register_success">Đăng ký thành công!</string>
+    <string name="register_failed">Đăng ký thất bại: </string>
+    <string name="database_error">Lỗi lưu dữ liệu: </string>
 </resources>
