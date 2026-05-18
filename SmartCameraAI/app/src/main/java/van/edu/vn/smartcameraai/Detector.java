@@ -34,46 +34,69 @@ public class Detector {
     }
 
     private void setupObjectDetector() {
+        // Cấu hình các thông số cơ bản cho bộ nhận diện
         ObjectDetector.ObjectDetectorOptions.Builder optionsBuilder =
                 ObjectDetector.ObjectDetectorOptions.builder()
-                        .setScoreThreshold(0.5f)
+                        .setScoreThreshold(0.4f)
                         .setMaxResults(3);
 
-        BaseOptions.Builder baseOptionsBuilder = BaseOptions.builder().setNumThreads(2);
+        // Ép chạy bằng CPU với 4 luồng xử lý để đảm bảo độ ổn định cao nhất, không dùng GPU
+        BaseOptions.Builder baseOptionsBuilder = BaseOptions.builder().setNumThreads(4);
         optionsBuilder.setBaseOptions(baseOptionsBuilder.build());
 
         try {
+            // Tiến hành khởi tạo mô hình AI
             objectDetector = ObjectDetector.createFromFileAndOptions(context, modelPath, optionsBuilder.build());
-        } catch (IOException e) {
-            Log.e("Detector", "TFLite failed to load model with error: " + e.getMessage());
+            Log.d("Detector", "Khởi tạo ObjectDetector bằng CPU thành công!");
+        } catch (Exception e) {
+            Log.e("Detector", "Không thể nạp mô hình AI. Lỗi: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
     public void detect(Bitmap bitmap, int imageRotation) {
+        // Nếu chưa khởi tạo thành công, thử gọi lại hàm setup
         if (objectDetector == null) {
             setupObjectDetector();
         }
 
+        // Kiểm tra an toàn: Nếu hệ thống JNI vẫn lỗi (do lỗi 16 KB), bỏ qua lượt quét này để tránh sập app
+        if (objectDetector == null) {
+            Log.e("Detector", "Bộ quét AI chưa sẵn sàng do lỗi nạp thư viện hệ thống.");
+            return;
+        }
+
         long inferenceTime = SystemClock.uptimeMillis();
 
-        // Create pre-processor for the image.
-        // See config: https://github.com/tensorflow/examples/blob/master/lite/examples/object_detection/android/lib_support/src/main/java/org/tensorflow/lite/examples/detection/tflite/TFLiteObjectDetectionAPIModel.java
+        // Tiền xử lý xoay ảnh từ Camera tương thích với Model AI
         ImageProcessor imageProcessor = new ImageProcessor.Builder()
                 .add(new Rot90Op(-imageRotation / 90))
                 .build();
 
-        // Preprocess the image and convert it into a TensorImage for detection.
+        // Chuyển đổi dữ liệu Bitmap sang TensorImage
         TensorImage tensorImage = imageProcessor.process(TensorImage.fromBitmap(bitmap));
 
-        List<Detection> results = objectDetector.detect(tensorImage);
-        inferenceTime = SystemClock.uptimeMillis() - inferenceTime;
+        try {
+            // Thực hiện nhận diện vật thể
+            List<Detection> results = objectDetector.detect(tensorImage);
+            inferenceTime = SystemClock.uptimeMillis() - inferenceTime;
 
-        listener.onDetection(results, inferenceTime, tensorImage.getWidth(), tensorImage.getHeight());
+            // Trả kết quả về cho Giao diện xử lý thông qua Listener
+            if (listener != null) {
+                listener.onDetection(results, inferenceTime, tensorImage.getWidth(), tensorImage.getHeight());
+            }
+        } catch (Exception e) {
+            Log.e("Detector", "Lỗi xảy ra trong quá trình nhận diện hình ảnh: " + e.getMessage());
+        }
     }
 
     public void close() {
         if (objectDetector != null) {
-            objectDetector.close();
+            try {
+                objectDetector.close();
+            } catch (Exception e) {
+                Log.e("Detector", "Lỗi khi đóng ObjectDetector: " + e.getMessage());
+            }
         }
     }
 }

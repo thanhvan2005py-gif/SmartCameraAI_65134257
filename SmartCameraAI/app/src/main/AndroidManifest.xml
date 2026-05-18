@@ -53,6 +53,11 @@
             android:exported="false"
             android:screenOrientation="portrait" />
 
+        <!-- Màn hình Lịch sử quét -->
+        <activity
+            android:name=".HistoryActivity"
+            android:exported="false" />
+
         <!-- Màn hình Chính -->
         <activity
             android:name=".MainActivity"

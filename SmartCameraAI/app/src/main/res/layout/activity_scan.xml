@@ -39,7 +39,7 @@
             android:id="@+id/tvInferenceTime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="100dp"
+            android:layout_marginBottom="110dp"
             android:background="#80000000"
             android:padding="8dp"
             android:textColor="#FFFFFF"
@@ -49,18 +49,34 @@
             app:layout_constraintStart_toStartOf="parent"
             tools:text="Inference: 20ms" />
 
+        <!-- Nút Chụp ảnh để lưu lịch sử -->
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fabCapture"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="32dp"
+            android:contentDescription="Capture"
+            android:src="@android:drawable/ic_menu_camera"
+            app:backgroundTint="#FF6D00"
+            app:fabSize="normal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:maxImageSize="32dp"
+            app:tint="#FFFFFF" />
+
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fabFlash"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="20dp"
-            android:layout_marginBottom="100dp"
-            app:backgroundTint="#FF6D00"
+            android:layout_marginEnd="32dp"
+            android:layout_marginBottom="32dp"
+            app:backgroundTint="#FFFFFF"
             app:fabSize="mini"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:srcCompat="@android:drawable/ic_menu_compass"
-            app:tint="#FFFFFF"
+            app:tint="#FF6D00"
             android:contentDescription="Flash" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

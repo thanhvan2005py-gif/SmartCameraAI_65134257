@@ -19,10 +19,13 @@ public class OverlayView extends View {
 
     private List<Detection> results = new ArrayList<>();
     private Paint boxPaint = new Paint();
+    private Paint textBackgroundPaint = new Paint(); // Bổ sung cọ vẽ nền chữ
     private Paint textPaint = new Paint();
+
     private float scaleFactor = 1f;
-    private int imageWidth = 1;
-    private int imageHeight = 1;
+    // Bổ sung bù trừ tọa độ phòng trường hợp ảnh bị cắt (crop) viền
+    private float offsetX = 0f;
+    private float offsetY = 0f;
 
     public OverlayView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
@@ -30,10 +33,16 @@ public class OverlayView extends View {
     }
 
     private void initPaints() {
+        // Cọ vẽ khung chữ nhật
         boxPaint.setColor(Color.parseColor("#FF6D00"));
         boxPaint.setStrokeWidth(8f);
         boxPaint.setStyle(Paint.Style.STROKE);
 
+        // Cọ vẽ nền chữ (cùng màu cam với khung)
+        textBackgroundPaint.setColor(Color.parseColor("#FF6D00"));
+        textBackgroundPaint.setStyle(Paint.Style.FILL);
+
+        // Cọ vẽ chữ
         textPaint.setColor(Color.WHITE);
         textPaint.setTextSize(44f);
         textPaint.setStyle(Paint.Style.FILL);
@@ -41,12 +50,20 @@ public class OverlayView extends View {
     }
 
     public void setResults(List<Detection> results, int imageWidth, int imageHeight) {
-        this.results = results;
-        this.imageWidth = imageWidth;
-        this.imageHeight = imageHeight;
-        
-        // Tính toán tỉ lệ giữa ảnh và view
+        // 1. Tạo bản sao của list để tránh xung đột đa luồng
+        this.results = new ArrayList<>(results);
+
+        // 2. Tính toán tỷ lệ (Scale)
         scaleFactor = Math.max(getWidth() * 1f / imageWidth, getHeight() * 1f / imageHeight);
+
+        // 3. Tính toán độ lệch (Offset) để đưa khung về đúng tâm nếu ảnh bị crop
+        float scaledWidth = imageWidth * scaleFactor;
+        float scaledHeight = imageHeight * scaleFactor;
+
+        offsetX = (getWidth() - scaledWidth) / 2f;
+        offsetY = (getHeight() - scaledHeight) / 2f;
+
+        // Yêu cầu vẽ lại view
         invalidate();
     }
 
@@ -57,19 +74,32 @@ public class OverlayView extends View {
         for (Detection detection : results) {
             RectF box = detection.getBoundingBox();
 
-            float left = box.left * scaleFactor;
-            float top = box.top * scaleFactor;
-            float right = box.right * scaleFactor;
-            float bottom = box.bottom * scaleFactor;
+            // Áp dụng scale và cộng thêm độ lệch (offset)
+            float left = box.left * scaleFactor + offsetX;
+            float top = box.top * scaleFactor + offsetY;
+            float right = box.right * scaleFactor + offsetX;
+            float bottom = box.bottom * scaleFactor + offsetY;
 
             // Vẽ khung bao quanh vật thể
             canvas.drawRect(left, top, right, bottom, boxPaint);
 
-            // Vẽ nhãn và độ tin cậy
+            // Xử lý nội dung nhãn
             String label = detection.getCategories().get(0).getLabel() + " " +
                     Math.round(detection.getCategories().get(0).getScore() * 100) + "%";
-            
-            canvas.drawText(label, left, top - 10, textPaint);
+
+            // Vẽ nền chữ
+            float textWidth = textPaint.measureText(label);
+            float textHeight = textPaint.getTextSize();
+            canvas.drawRect(
+                    left,
+                    top - textHeight - 10,
+                    left + textWidth + 10,
+                    top,
+                    textBackgroundPaint
+            );
+
+            // Vẽ nhãn và độ tin cậy đè lên nền
+            canvas.drawText(label, left + 5, top - 10, textPaint);
         }
     }
 }

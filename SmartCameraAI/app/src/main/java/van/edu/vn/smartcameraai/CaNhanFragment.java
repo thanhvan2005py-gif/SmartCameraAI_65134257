@@ -94,17 +94,21 @@ public class CaNhanFragment extends Fragment {
             });
         }
         
+        // Mở màn hình Lịch sử quét
         if (btnScanHistory != null) {
-            btnScanHistory.setOnClickListener(v -> Toast.makeText(getContext(), "Chức năng Lịch sử quét đang phát triển", Toast.LENGTH_SHORT).show());
+            btnScanHistory.setOnClickListener(v -> {
+                Intent intent = new Intent(getActivity(), HistoryActivity.class);
+                startActivity(intent);
+            });
         }
     }
 
     private void loadUserData(String uid) {
-        // Sử dụng addValueEventListener để tự động cập nhật UI khi dữ liệu trong database thay đổi (sau khi Edit Profile)
+        // Sử dụng addValueEventListener để tự động cập nhật UI khi dữ liệu trong database thay đổi
         mDatabase.child("users").child(uid).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (!isAdded()) return; // Kiểm tra Fragment còn gắn vào Activity không
+                if (!isAdded()) return;
 
                 if (snapshot.exists()) {
                     User user = snapshot.getValue(User.class);
@@ -113,7 +117,6 @@ public class CaNhanFragment extends Fragment {
                         tvUserEmail.setText(user.email);
                     }
                 } else {
-                    // Fallback nếu không có trong database
                     FirebaseUser firebaseUser = mAuth.getCurrentUser();
                     if (firebaseUser != null) {
                         tvUserEmail.setText(firebaseUser.getEmail());
@@ -125,7 +128,7 @@ public class CaNhanFragment extends Fragment {
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 if (isAdded()) {
-                    Toast.makeText(getContext(), "Lỗi tải dữ liệu: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Lỗi tải dữ liệu", Toast.LENGTH_SHORT).show();
                 }
             }
         });
