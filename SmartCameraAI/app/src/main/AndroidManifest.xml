@@ -53,6 +53,12 @@
             android:exported="false"
             android:screenOrientation="portrait" />
 
+        <!-- Màn hình Quét ảnh tĩnh từ thư viện -->
+        <activity
+            android:name=".StaticScanActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+
         <!-- Màn hình Lịch sử quét -->
         <activity
             android:name=".HistoryActivity"

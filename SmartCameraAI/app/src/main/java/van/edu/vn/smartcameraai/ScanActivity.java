@@ -1,10 +1,11 @@
 package van.edu.vn.smartcameraai;
 
 import android.Manifest;
-import android.content.Context;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -13,6 +14,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.camera.core.Camera;
@@ -37,7 +40,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.util.HashMap;
 import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -52,23 +54,26 @@ public class ScanActivity extends AppCompatActivity implements Detector.Detector
     private TextView tvInferenceTime;
     private ProgressBar progressBar;
     private ImageButton btnBack;
-    private FloatingActionButton fabFlash, fabCapture;
+    private FloatingActionButton fabFlash, fabCapture, fabGallery;
 
     private Detector detector;
     private ExecutorService cameraExecutor;
     private CameraControl cameraControl;
     private boolean isFlashEnabled = false;
 
-    // Biến cờ dùng để kiểm soát việc chụp hình (Chỉ chụp khi bằng true)
     private volatile boolean isCaptureRequested = false;
     private String lastDetectedObject = "Không xác định";
     private float lastScore = 0f;
+
+    // Trình chọn ảnh từ thư viện
+    private ActivityResultLauncher<Intent> galleryLauncher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scan);
 
+        // 1. Ánh xạ View
         viewFinder = findViewById(R.id.viewFinder);
         overlayView = findViewById(R.id.overlayView);
         tvInferenceTime = findViewById(R.id.tvInferenceTime);
@@ -76,8 +81,30 @@ public class ScanActivity extends AppCompatActivity implements Detector.Detector
         btnBack = findViewById(R.id.btnBackScan);
         fabFlash = findViewById(R.id.fabFlash);
         fabCapture = findViewById(R.id.fabCapture);
+        fabGallery = findViewById(R.id.fabGallery);
 
         btnBack.setOnClickListener(v -> finish());
+
+        // 2. KHỞI TẠO ActivityResultLauncher
+        galleryLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
+                        Uri uri = result.getData().getData();
+                        // Chuyển sang màn hình StaticScanActivity để quét ảnh vừa chọn
+                        Intent intent = new Intent(ScanActivity.this, StaticScanActivity.class);
+                        intent.putExtra("image_uri", uri.toString());
+                        startActivity(intent);
+                    }
+                }
+        );
+
+        // 3. Sự kiện nút mở Thư viện
+        fabGallery.setOnClickListener(v -> {
+            Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+            intent.setType("image/*");
+            galleryLauncher.launch(intent);
+        });
 
         fabFlash.setOnClickListener(v -> {
             if (cameraControl != null) {
@@ -86,9 +113,9 @@ public class ScanActivity extends AppCompatActivity implements Detector.Detector
             }
         });
 
-        // HÀNH ĐỘNG CHỤP: Chỉ bật cờ yêu cầu chụp lên, không xử lý logic nặng ở đây để tránh lag giao diện
         fabCapture.setOnClickListener(v -> {
             isCaptureRequested = true;
+            Toast.makeText(this, "Đang chụp hình...", Toast.LENGTH_SHORT).show();
         });
 
         cameraExecutor = Executors.newSingleThreadExecutor();
@@ -131,9 +158,7 @@ public class ScanActivity extends AppCompatActivity implements Detector.Detector
                         .setOutputImageFormat(ImageAnalysis.OUTPUT_IMAGE_FORMAT_RGBA_8888)
                         .build();
 
-                imageAnalysis.setAnalyzer(cameraExecutor, image -> {
-                    detectObjects(image);
-                });
+                imageAnalysis.setAnalyzer(cameraExecutor, this::detectObjects);
 
                 CameraSelector cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA;
                 cameraProvider.unbindAll();
@@ -154,15 +179,14 @@ public class ScanActivity extends AppCompatActivity implements Detector.Detector
             Bitmap bitmap = Bitmap.createBitmap(imageProxy.getWidth(), imageProxy.getHeight(), Bitmap.Config.ARGB_8888);
             bitmap.copyPixelsFromBuffer(imageProxy.getPlanes()[0].getBuffer());
 
-            // KIỂM TRA: Nếu người dùng vừa nhấn nút chụp, tiến hành đóng gói lưu file ngay trên luồng background này
             if (isCaptureRequested) {
-                isCaptureRequested = false; // Hạ cờ xuống ngay lập tức để không bị lưu lặp lại ở khung hình sau
+                isCaptureRequested = false;
                 captureAndSave(bitmap);
             }
 
             detector.detect(bitmap, imageProxy.getImageInfo().getRotationDegrees());
         } catch (Exception e) {
-            Log.e(TAG, "Lỗi xử lý khung hình: " + e.getMessage());
+            Log.e(TAG, "Lỗi frame: " + e.getMessage());
         } finally {
             imageProxy.close();
         }
@@ -180,24 +204,16 @@ public class ScanActivity extends AppCompatActivity implements Detector.Detector
         });
     }
 
-    // Hàm nhận Bitmap trực tiếp từ luồng quét tại đúng thời điểm bấm nút
     private void captureAndSave(Bitmap bitmapToSave) {
         if (bitmapToSave == null) return;
-
         String fileName = "scan_" + System.currentTimeMillis() + ".jpg";
         File file = new File(getFilesDir(), fileName);
-
         try (FileOutputStream out = new FileOutputStream(file)) {
             bitmapToSave.compress(Bitmap.CompressFormat.JPEG, 90, out);
-
-            // Tiến hành đẩy thông tin lên Firebase Realtime
             saveToFirebase(file.getAbsolutePath());
-
-            // Hiển thị thông báo lên màn hình chính
-            runOnUiThread(() -> Toast.makeText(ScanActivity.this, "Đã lưu " + lastDetectedObject + " vào lịch sử quét", Toast.LENGTH_SHORT).show());
+            runOnUiThread(() -> Toast.makeText(ScanActivity.this, "Đã lưu vào lịch sử", Toast.LENGTH_SHORT).show());
         } catch (Exception e) {
-            Log.e(TAG, "Lỗi lưu ảnh: " + e.getMessage());
-            runOnUiThread(() -> Toast.makeText(ScanActivity.this, "Lỗi khi chụp hình", Toast.LENGTH_SHORT).show());
+            Log.e(TAG, "Lỗi lưu file: " + e.getMessage());
         }
     }
 
@@ -230,5 +246,6 @@ public class ScanActivity extends AppCompatActivity implements Detector.Detector
     protected void onDestroy() {
         super.onDestroy();
         cameraExecutor.shutdown();
+        if (detector != null) detector.close();
     }
 }

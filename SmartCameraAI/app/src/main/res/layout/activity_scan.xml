@@ -65,6 +65,21 @@
             app:maxImageSize="32dp"
             app:tint="#FFFFFF" />
 
+        <!-- Nút chọn ảnh từ thư viện -->
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fabGallery"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginBottom="32dp"
+            android:contentDescription="Gallery"
+            android:src="@android:drawable/ic_menu_gallery"
+            app:backgroundTint="#FFFFFF"
+            app:fabSize="mini"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:tint="#FF6D00" />
+
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fabFlash"
             android:layout_width="wrap_content"
