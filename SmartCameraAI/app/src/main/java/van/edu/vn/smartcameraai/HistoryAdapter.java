@@ -5,6 +5,7 @@ import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -20,9 +21,15 @@ import java.util.Locale;
 public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHolder> {
 
     private List<ScanHistory> historyList;
+    private OnHistoryItemClickListener listener;
 
-    public HistoryAdapter(List<ScanHistory> historyList) {
+    public interface OnHistoryItemClickListener {
+        void onDeleteClick(ScanHistory history);
+    }
+
+    public HistoryAdapter(List<ScanHistory> historyList, OnHistoryItemClickListener listener) {
         this.historyList = historyList;
+        this.listener = listener;
     }
 
     @NonNull
@@ -48,6 +55,12 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
                 holder.imgView.setImageBitmap(myBitmap);
             }
         }
+
+        holder.btnDelete.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onDeleteClick(history);
+            }
+        });
     }
 
     @Override
@@ -58,6 +71,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
     public static class ViewHolder extends RecyclerView.ViewHolder {
         ImageView imgView;
         TextView tvName, tvConfidence, tvDate;
+        ImageButton btnDelete;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -65,6 +79,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
             tvName = itemView.findViewById(R.id.tvHistoryName);
             tvConfidence = itemView.findViewById(R.id.tvHistoryConfidence);
             tvDate = itemView.findViewById(R.id.tvHistoryDate);
+            btnDelete = itemView.findViewById(R.id.btnDeleteHistory);
         }
     }
 }

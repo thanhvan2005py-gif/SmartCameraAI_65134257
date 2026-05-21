@@ -1,5 +1,6 @@
 package van.edu.vn.smartcameraai;
 
+import android.app.AlertDialog;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
@@ -23,7 +24,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class HistoryActivity extends AppCompatActivity {
+public class HistoryActivity extends AppCompatActivity implements HistoryAdapter.OnHistoryItemClickListener {
 
     private RecyclerView rvHistory;
     private HistoryAdapter adapter;
@@ -49,7 +50,7 @@ public class HistoryActivity extends AppCompatActivity {
 
         rvHistory.setLayoutManager(new LinearLayoutManager(this));
         historyList = new ArrayList<>();
-        adapter = new HistoryAdapter(historyList);
+        adapter = new HistoryAdapter(historyList, this);
         rvHistory.setAdapter(adapter);
 
         currentUid = FirebaseAuth.getInstance().getUid();
@@ -72,14 +73,15 @@ public class HistoryActivity extends AppCompatActivity {
                     for (DataSnapshot data : snapshot.getChildren()) {
                         ScanHistory history = data.getValue(ScanHistory.class);
                         if (history != null) {
+                            history.key = data.getKey(); // Lưu lại key để xóa
                             historyList.add(history);
                         }
                     }
-                    // Đảo ngược danh sách để hiện cái mới nhất lên đầu
                     Collections.reverse(historyList);
                     adapter.notifyDataSetChanged();
                     tvEmpty.setVisibility(View.GONE);
                 } else {
+                    adapter.notifyDataSetChanged();
                     tvEmpty.setVisibility(View.VISIBLE);
                 }
             }
@@ -90,5 +92,25 @@ public class HistoryActivity extends AppCompatActivity {
                 Toast.makeText(HistoryActivity.this, "Lỗi: " + error.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    @Override
+    public void onDeleteClick(ScanHistory history) {
+        new AlertDialog.Builder(this)
+                .setTitle("Xác nhận xóa")
+                .setMessage("Bạn có chắc muốn xóa mục này không?")
+                .setPositiveButton("Xóa", (dialog, which) -> {
+                    if (history.key != null) {
+                        mDatabase.child(history.key).removeValue().addOnCompleteListener(task -> {
+                            if (task.isSuccessful()) {
+                                Toast.makeText(HistoryActivity.this, "Đã xóa lịch sử", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(HistoryActivity.this, "Xóa thất bại", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+                })
+                .setNegativeButton("Hủy", null)
+                .show();
     }
 }

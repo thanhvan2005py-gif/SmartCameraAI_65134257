@@ -56,5 +56,17 @@
                 android:textColor="#999999"
                 android:textSize="12sp" />
         </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/btnDeleteHistory"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_gravity="center_vertical"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:padding="12dp"
+            android:src="@android:drawable/ic_menu_delete"
+            app:tint="#EF4444"
+            android:contentDescription="Xóa lịch sử" />
+
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>
