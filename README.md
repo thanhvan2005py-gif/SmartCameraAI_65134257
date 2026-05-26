@@ -16,7 +16,7 @@
 - 🎧 **Hỗ trợ:** Trung tâm hỗ trợ người dùng tích hợp sẵn.
 
 ##  Video Demo
-[![Video Demo](https://img.shields.io/badge/Xem_Video_Demo-Google_Drive-1FA463?style=for-the-badge&logo=google-drive&logoColor=white)](https://drive.google.com/file/d/1pAPWljwUGLFempXjEohHGVzoASbUNCap/view?usp=sharing)
+[![Video Demo](https://img.shields.io/badge/Xem_Video_Demo-1FA463?style=for-the-badge&logo=google-drive&logoColor=white)](https://drive.google.com/file/d/1pAPWljwUGLFempXjEohHGVzoASbUNCap/view?usp=sharing)
 
 ---
 
