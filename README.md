@@ -5,7 +5,7 @@
 ## 📖 Giới thiệu
 **SmartCameraAI** là ứng dụng hỗ trợ nhận diện hình ảnh thông minh bằng camera và ảnh từ thư viện, kết hợp AI để phân tích và hiển thị kết quả trực quan. Dự án được phát triển bằng môi trường **Android Studio**, tích hợp **Firebase Authentication** và các công nghệ xử lý ảnh hiện đại.
 
-##  Chức năng chính
+## 1.Chức năng chính
 - 🔐 **Xác thực:** Đăng ký / Đăng nhập tài khoản.
 - 🏠 **Giao diện:** Home trực quan, dễ sử dụng.
 - 📷 **Nhận diện thông minh (AI):**
@@ -15,12 +15,12 @@
 - 👤 **Cá nhân hóa:** Quản lý thông tin, chỉnh sửa hồ sơ và đổi mật khẩu.
 - 🎧 **Hỗ trợ:** Trung tâm hỗ trợ người dùng tích hợp sẵn.
 
-##  Video Demo
-[![Video Demo](https://img.shields.io/badge/Xem_Video_Demo-1FA463?style=for-the-badge&logo=google-drive&logoColor=white)](https://drive.google.com/file/d/1pAPWljwUGLFempXjEohHGVzoASbUNCap/view?usp=sharing)
+## 2.Video Demo
+[▶️ Xem Video Demo tại đây](https://drive.google.com/file/d/1pAPWljwUGLFempXjEohHGVzoASbUNCap/view?usp=sharing)
 
 ---
 
-##  Kết quả thực nghiệm
+## 3.Kết quả thực nghiệm
 
 ### 1. Xác thực & Giao diện chính
 | Đăng nhập | Đăng ký | Màn hình Home |
