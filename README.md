@@ -1,18 +1,11 @@
-<div align="center">
-  <h1>📸 SmartCameraAI</h1>
-  <p><i>Ứng dụng Android hỗ trợ nhận diện hình ảnh thông minh kết hợp AI</i></p>
-  
-  <img src="https://img.shields.io/badge/Platform-Android-3DDC84?style=flat-square&logo=android&logoColor=white" alt="Android" />
-  <img src="https://img.shields.io/badge/Database-Firebase-FFCA28?style=flat-square&logo=firebase&logoColor=black" alt="Firebase" />
-  <img src="https://img.shields.io/badge/Tech-AI%20%2F%20ML-00599C?style=flat-square&logo=google-cloud&logoColor=white" alt="AI/ML" />
-</div>
 
----
+  <h1> SmartCameraAI</h1>
+  <p><i>Ứng dụng Android hỗ trợ nhận diện hình ảnh thông minh kết hợp AI</i></p>
 
 ## 📖 Giới thiệu
 **SmartCameraAI** là ứng dụng hỗ trợ nhận diện hình ảnh thông minh bằng camera và ảnh từ thư viện, kết hợp AI để phân tích và hiển thị kết quả trực quan. Dự án được phát triển bằng môi trường **Android Studio**, tích hợp **Firebase Authentication** và các công nghệ xử lý ảnh hiện đại.
 
-## 🚀 Chức năng chính
+##  Chức năng chính
 - 🔐 **Xác thực:** Đăng ký / Đăng nhập tài khoản.
 - 🏠 **Giao diện:** Home trực quan, dễ sử dụng.
 - 📷 **Nhận diện thông minh (AI):**
@@ -22,12 +15,12 @@
 - 👤 **Cá nhân hóa:** Quản lý thông tin, chỉnh sửa hồ sơ và đổi mật khẩu.
 - 🎧 **Hỗ trợ:** Trung tâm hỗ trợ người dùng tích hợp sẵn.
 
-## 🎬 Video Demo
+##  Video Demo
 [![Video Demo](https://img.shields.io/badge/Xem_Video_Demo-Google_Drive-1FA463?style=for-the-badge&logo=google-drive&logoColor=white)](https://drive.google.com/file/d/1pAPWljwUGLFempXjEohHGVzoASbUNCap/view?usp=sharing)
 
 ---
 
-## 🖼️ Kết quả thực nghiệm
+##  Kết quả thực nghiệm
 
 ### 1. Xác thực & Giao diện chính
 | Đăng nhập | Đăng ký | Màn hình Home |
