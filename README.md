@@ -17,7 +17,8 @@ Dự án được phát triển bằng Android Studio cùng Firebase Authenticat
 -  Đổi mật khẩu
 -  Trung tâm hỗ trợ người dùng
 
-
+# Video demo chương trình
+https://drive.google.com/file/d/1pAPWljwUGLFempXjEohHGVzoASbUNCap/view?usp=sharing
 #  Kết quả thực nghiệm
 
 ---
